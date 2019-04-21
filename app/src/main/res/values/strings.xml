@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">FGO_AP_Reminder</string>
+    <string name="currentAPTextView">現在のAP</string>
+    <string name="editTextHint">入力するがいい</string>
+    <string name="desiredAPTextView">欲しいAP</string>
+    <string name="maxAPTextView">最大AP数</string>
+    <string name="confirmButton">確認</string>
 </resources>
