@@ -7,6 +7,8 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -84,13 +86,17 @@ public class MainActivity extends AppCompatActivity {
         outputTextView.setText(outputText.toString());
 
         // schedule notifications
+        Bitmap saber_stand = BitmapFactory.decodeResource(getResources(), R.drawable.saber_stand);
+        Bitmap saber_sad = BitmapFactory.decodeResource(getResources(), R.drawable.saber_sad);
         NotificationCompat.Builder builder1 = new NotificationCompat.Builder(this, "0")
-                .setSmallIcon(R.mipmap.ic_launcher_round)
+                .setSmallIcon(R.drawable.saber_notif)
+                .setLargeIcon(saber_stand)
                 .setContentTitle("行きましょう、マスター。")
                 .setContentText("APが足りました。決着をつけましょう。");
         scheduleNotification(1, builder1.build(), minToDesiredAP);
         NotificationCompat.Builder builder2 = new NotificationCompat.Builder(this, "0")
-                .setSmallIcon(R.mipmap.ic_launcher_round)
+                .setSmallIcon(R.drawable.saber_notif)
+                .setLargeIcon(saber_sad)
                 .setContentTitle("まだですか？マスター。")
                 .setContentText("そろそろ行った方がいいではないですか？");
         scheduleNotification(2, builder2.build(), minToMaxAP);
