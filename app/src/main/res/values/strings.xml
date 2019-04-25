@@ -1,8 +1,28 @@
 <resources>
-    <string name="app_name">FGO_AP_Reminder</string>
+    <string name="app_name">FGOAP</string>
+
+    <!--- UI -->
+    <string name="actionBarTitle">Fate/AP calculator</string>
     <string name="currentAPTextView">現在のAP</string>
-    <string name="editTextHint">入力するがいい</string>
     <string name="desiredAPTextView">欲しいAP</string>
     <string name="maxAPTextView">最大AP数</string>
+    <string name="editTextHint">入力するがいい</string>
     <string name="confirmButton">確認</string>
+
+    <!--- Messages -->
+    <string name="invalidInputMessage">ちゃんと入力してくださいよ、マスター。</string>
+    <string name="currentTime">現在時刻：</string>
+    <string name="timeToDesired">欲しいAP数まで：</string>
+    <string name="timeAtDesired">欲しいAP数時刻：</string>
+    <string name="timeToMax">AP MAXになるまで：</string>
+    <string name="timeAtMax">AP MAXになる時刻：</string>
+
+    <!--- Notifications -->
+    <string name="desiredNotifTitle">行きましょう、マスター。</string>
+    <string name="desiredNotifText">APが足りました。決着の時です。</string>
+    <string name="maxNotifTitle">まだですか？マスター。</string>
+    <string name="maxNotifText">そろそろ行った方がいいではないですか？</string>
+
+    <!--- Other -->
+    <string name="notificationChannel">APリマインダー</string>
 </resources>

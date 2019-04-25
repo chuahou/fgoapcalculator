@@ -26,11 +26,11 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        getSupportActionBar().setTitle("Fate/AP calculator");
+        getSupportActionBar().setTitle(R.string.actionBarTitle);
 
         // create notification channel
-        CharSequence name = "Notification Channel";
-        String description = "Notification Channel";
+        CharSequence name = getString(R.string.notificationChannel);
+        String description = getString(R.string.notificationChannel);
         int importance = NotificationManager.IMPORTANCE_DEFAULT;
         NotificationChannel channel = new NotificationChannel("0", name, importance);
         channel.setDescription(description);
@@ -54,7 +54,7 @@ public class MainActivity extends AppCompatActivity {
             maxAP = Integer.parseInt(maxAPEditText.getText().toString());
         } catch (Exception e)
         {
-            outputTextView.setText("ちゃんと入力してくださいよ、マスター。");
+            outputTextView.setText(R.string.invalidInputMessage);
             return;
         }
 
@@ -70,17 +70,17 @@ public class MainActivity extends AppCompatActivity {
 
         // get current time
         Calendar c = Calendar.getInstance();
-        outputText.append("現在時刻：" + df.format(c.getTime()) + "\n");
+        outputText.append(getString(R.string.currentTime) + df.format(c.getTime()) + "\n");
 
         // get time to desired AP
         c.add(Calendar.MINUTE, minToDesiredAP);
-        outputText.append("欲しいAP数まで：" + minToDesiredAP + "分\n");
-        outputText.append("欲しいAP数時刻：" + df.format(c.getTime()) + "\n");
+        outputText.append(getString(R.string.timeToDesired) + minToDesiredAP + "分\n");
+        outputText.append(getString(R.string.timeAtDesired) + df.format(c.getTime()) + "\n");
 
         // get time to max AP
         c.add(Calendar.MINUTE, minToMaxAP - minToDesiredAP);
-        outputText.append("APが増えすぎるまで：" + minToMaxAP + "分\n");
-        outputText.append("APが増えすぎる時刻：" + df.format(c.getTime()) + "\n");
+        outputText.append(getString(R.string.timeToMax) + minToMaxAP + "分\n");
+        outputText.append(getString(R.string.timeAtMax) + df.format(c.getTime()) + "\n");
 
         // set text view text
         outputTextView.setText(outputText.toString());
@@ -91,14 +91,14 @@ public class MainActivity extends AppCompatActivity {
         NotificationCompat.Builder builder1 = new NotificationCompat.Builder(this, "0")
                 .setSmallIcon(R.drawable.saber_notif)
                 .setLargeIcon(saber_stand)
-                .setContentTitle("行きましょう、マスター。")
-                .setContentText("APが足りました。決着をつけましょう。");
+                .setContentTitle(getString(R.string.desiredNotifTitle))
+                .setContentText(getString(R.string.desiredNotifText));
         scheduleNotification(1, builder1.build(), minToDesiredAP);
         NotificationCompat.Builder builder2 = new NotificationCompat.Builder(this, "0")
                 .setSmallIcon(R.drawable.saber_notif)
                 .setLargeIcon(saber_sad)
-                .setContentTitle("まだですか？マスター。")
-                .setContentText("そろそろ行った方がいいではないですか？");
+                .setContentTitle(getString(R.string.maxNotifTitle))
+                .setContentText(getString(R.string.maxNotifText));
         scheduleNotification(2, builder2.build(), minToMaxAP);
     }
 
