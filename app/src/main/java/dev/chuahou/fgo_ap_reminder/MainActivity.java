@@ -74,12 +74,23 @@ public class MainActivity extends AppCompatActivity {
 
         // get time to desired AP
         c.add(Calendar.MINUTE, minToDesiredAP);
-        outputText.append(getString(R.string.timeToDesired) + minToDesiredAP + "分\n");
+        int dispHours, dispMins; // displayed hours and minutes
+        dispHours = minToDesiredAP / 60;
+        dispMins = minToDesiredAP - dispHours * 60;
+        outputText.append(getString(R.string.timeToDesired));
+        if (dispHours > 0)
+            outputText.append(dispHours + "時間");
+        outputText.append(dispMins + "分\n");
         outputText.append(getString(R.string.timeAtDesired) + df.format(c.getTime()) + "\n");
 
         // get time to max AP
         c.add(Calendar.MINUTE, minToMaxAP - minToDesiredAP);
-        outputText.append(getString(R.string.timeToMax) + minToMaxAP + "分\n");
+        dispHours = minToMaxAP / 60;
+        dispMins = minToMaxAP - dispHours * 60;
+        outputText.append(getString(R.string.timeToDesired));
+        if (dispHours > 0)
+            outputText.append(dispHours + "時間");
+        outputText.append(dispMins + "分\n");
         outputText.append(getString(R.string.timeAtMax) + df.format(c.getTime()) + "\n");
 
         // set text view text
