@@ -69,14 +69,14 @@ public class MainActivity extends AppCompatActivity {
         int maxAP = _sharedPreferences.getInt(_SP_MAX_AP_KEY, 0);
 
         // set output text and fill fields
-        updateState(currentAP, desiredAP, maxAP, false);
+        updateState(c, currentAP, desiredAP, maxAP, false);
         _currentAPEditText.setText(String.valueOf(currentAP));
         _desiredAPEditText.setText(String.valueOf(desiredAP));
         _maxAPEditText.setText(String.valueOf(maxAP));
     }
 
     // process AP levels, updating the saved state, notification and output text
-    private void updateState(int currentAP, int desiredAP, int maxAP, boolean notify)
+    private void updateState(Calendar time, int currentAP, int desiredAP, int maxAP, boolean notify)
     {
         // calculate how much time to each AP level
         int minToDesiredAP = 5 * Math.max(desiredAP - currentAP, 0);
@@ -88,13 +88,12 @@ public class MainActivity extends AppCompatActivity {
         // date formatting
         SimpleDateFormat df = new SimpleDateFormat("h:mm a");
 
-        // get current time
-        Calendar c = Calendar.getInstance();
-        long currTimeInMillis = c.getTimeInMillis(); // for saving
-        outputText.append(getString(R.string.currentTime) + df.format(c.getTime()) + "\n");
+        // get time
+        long currTimeInMillis = time.getTimeInMillis(); // for saving
+        outputText.append(getString(R.string.currentTime) + df.format(time.getTime()) + "\n");
 
         // get time to desired AP
-        c.add(Calendar.MINUTE, minToDesiredAP);
+        time.add(Calendar.MINUTE, minToDesiredAP);
         int dispHours, dispMins; // displayed hours and minutes
         dispHours = minToDesiredAP / 60;
         dispMins = minToDesiredAP - dispHours * 60;
@@ -102,17 +101,17 @@ public class MainActivity extends AppCompatActivity {
         if (dispHours > 0)
             outputText.append(dispHours + "時間");
         outputText.append(dispMins + "分\n");
-        outputText.append(getString(R.string.timeAtDesired) + df.format(c.getTime()) + "\n");
+        outputText.append(getString(R.string.timeAtDesired) + df.format(time.getTime()) + "\n");
 
         // get time to max AP
-        c.add(Calendar.MINUTE, minToMaxAP - minToDesiredAP);
+        time.add(Calendar.MINUTE, minToMaxAP - minToDesiredAP);
         dispHours = minToMaxAP / 60;
         dispMins = minToMaxAP - dispHours * 60;
         outputText.append(getString(R.string.timeToDesired));
         if (dispHours > 0)
             outputText.append(dispHours + "時間");
         outputText.append(dispMins + "分\n");
-        outputText.append(getString(R.string.timeAtMax) + df.format(c.getTime()) + "\n");
+        outputText.append(getString(R.string.timeAtMax) + df.format(time.getTime()) + "\n");
 
         // set text view text
         _outputTextView.setText(outputText.toString());
@@ -160,7 +159,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         // update state and notify
-        updateState(currentAP, desiredAP, maxAP, true);
+        updateState(Calendar.getInstance(), currentAP, desiredAP, maxAP, true);
     }
 
     // schedules provided notification in specified number of minutes
