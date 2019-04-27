@@ -75,6 +75,39 @@ public class MainActivity extends AppCompatActivity {
         _maxAPEditText.setText(String.valueOf(maxAP));
     }
 
+    // generates a string representing duration from minutes provided
+    private String generateDurationString(int minutes)
+    {
+        StringBuilder sb = new StringBuilder("");
+
+        // 0 minutes
+        if (minutes == 0)
+        {
+            sb.append("0分");
+        }
+
+        // hours and minutes
+        else if (minutes >= 60)
+        {
+            // add hours display
+            int hours = minutes / 60;
+            sb.append(hours + "時間");
+            minutes -= hours * 60;
+
+            // add minutes display if necessary
+            if (minutes > 0)
+                sb.append(String.format("%02d", minutes) + "分");
+        }
+
+        // less than 1 hour
+        else
+        {
+            sb.append(minutes + "分");
+        }
+
+        return sb.toString();
+    }
+
     // process AP levels, updating the saved state, notification and output text
     private void updateState(Calendar time, int currentAP, int desiredAP, int maxAP, boolean notify)
     {
@@ -96,31 +129,18 @@ public class MainActivity extends AppCompatActivity {
         time.add(Calendar.MINUTE, minToDesiredAP);
         long desiredAPTimeInMillis = time.getTimeInMillis();
 
-        // calculate display hours and minutes
-        int dispHours, dispMins;
-        dispHours = minToDesiredAP / 60;
-        dispMins = minToDesiredAP - dispHours * 60;
-
         // append desired AP text
         outputText.append(getString(R.string.timeToDesired));
-        if (dispHours > 0)
-            outputText.append(dispHours + "時間");
-        outputText.append(dispMins + "分\n");
+        outputText.append(generateDurationString(minToDesiredAP) + "\n");
         outputText.append(getString(R.string.timeAtDesired) + df.format(time.getTime()) + "\n");
 
         // get time to max AP
         time.add(Calendar.MINUTE, minToMaxAP - minToDesiredAP);
         long maxAPTimeInMillis = time.getTimeInMillis();
 
-        // calculate display hours and minutes
-        dispHours = minToMaxAP / 60;
-        dispMins = minToMaxAP - dispHours * 60;
-
         // append max AP text
         outputText.append(getString(R.string.timeToDesired));
-        if (dispHours > 0)
-            outputText.append(dispHours + "時間");
-        outputText.append(dispMins + "分\n");
+        outputText.append(generateDurationString(minToMaxAP) + "\n");
         outputText.append(getString(R.string.timeAtMax) + df.format(time.getTime()) + "\n");
 
         // set text view text
