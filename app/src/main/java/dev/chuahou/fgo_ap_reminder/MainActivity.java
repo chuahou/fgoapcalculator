@@ -88,15 +88,20 @@ public class MainActivity extends AppCompatActivity {
         // date formatting
         SimpleDateFormat df = new SimpleDateFormat("h:mm a");
 
-        // get time
+        // get current time
         long currTimeInMillis = time.getTimeInMillis(); // for saving
         outputText.append(getString(R.string.currentTime) + df.format(time.getTime()) + "\n");
 
         // get time to desired AP
         time.add(Calendar.MINUTE, minToDesiredAP);
-        int dispHours, dispMins; // displayed hours and minutes
+        long desiredAPTimeInMillis = time.getTimeInMillis();
+
+        // calculate display hours and minutes
+        int dispHours, dispMins;
         dispHours = minToDesiredAP / 60;
         dispMins = minToDesiredAP - dispHours * 60;
+
+        // append desired AP text
         outputText.append(getString(R.string.timeToDesired));
         if (dispHours > 0)
             outputText.append(dispHours + "時間");
@@ -105,8 +110,13 @@ public class MainActivity extends AppCompatActivity {
 
         // get time to max AP
         time.add(Calendar.MINUTE, minToMaxAP - minToDesiredAP);
+        long maxAPTimeInMillis = time.getTimeInMillis();
+
+        // calculate display hours and minutes
         dispHours = minToMaxAP / 60;
         dispMins = minToMaxAP - dispHours * 60;
+
+        // append max AP text
         outputText.append(getString(R.string.timeToDesired));
         if (dispHours > 0)
             outputText.append(dispHours + "時間");
@@ -124,13 +134,15 @@ public class MainActivity extends AppCompatActivity {
                     .setSmallIcon(R.drawable.saber_notif)
                     .setLargeIcon(saber_stand)
                     .setContentTitle(getString(R.string.desiredNotifTitle))
-                    .setContentText(getString(R.string.desiredNotifText));
+                    .setContentText(getString(R.string.desiredNotifText))
+                    .setWhen(desiredAPTimeInMillis);
             scheduleNotification(1, builder1.build(), minToDesiredAP);
             NotificationCompat.Builder builder2 = new NotificationCompat.Builder(this, "0")
                     .setSmallIcon(R.drawable.saber_notif)
                     .setLargeIcon(saber_sad)
                     .setContentTitle(getString(R.string.maxNotifTitle))
-                    .setContentText(getString(R.string.maxNotifText));
+                    .setContentText(getString(R.string.maxNotifText))
+                    .setWhen(maxAPTimeInMillis);
             scheduleNotification(2, builder2.build(), minToMaxAP);
         }
 
