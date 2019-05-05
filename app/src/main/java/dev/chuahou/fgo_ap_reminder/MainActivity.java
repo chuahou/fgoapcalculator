@@ -49,9 +49,11 @@ public class MainActivity extends AppCompatActivity {
         CharSequence name = getString(R.string.notificationChannel);
         String description = getString(R.string.notificationChannel);
         int importance = NotificationManager.IMPORTANCE_DEFAULT;
-        NotificationChannel channel = new NotificationChannel("0", name, importance);
+        NotificationChannel channel =
+                new NotificationChannel("0", name, importance);
         channel.setDescription(description);
-        NotificationManager notificationManager = getSystemService(NotificationManager.class);
+        NotificationManager notificationManager =
+                getSystemService(NotificationManager.class);
         notificationManager.createNotificationChannel(channel);
 
         // get needed views
@@ -75,7 +77,11 @@ public class MainActivity extends AppCompatActivity {
         _maxAPEditText.setText(String.valueOf(maxAP));
     }
 
-    // generates a string representing duration from minutes provided
+    /**
+     * Generates a string representing the duration provided.
+     * @param minutes the duration in minutes
+     * @return string format duration
+     */
     private String generateDurationString(int minutes)
     {
         StringBuilder sb = new StringBuilder("");
@@ -108,8 +114,17 @@ public class MainActivity extends AppCompatActivity {
         return sb.toString();
     }
 
-    // process AP levels, updating the saved state, notification and output text
-    private void updateState(Calendar time, int currentAP, int desiredAP, int maxAP, boolean notify)
+    /**
+     * Process AP levels, updating the saved state, notification and output
+     * text in the UI.
+     * @param time time at which calculation was performed
+     * @param currentAP current AP at time of calculation
+     * @param desiredAP desired AP
+     * @param maxAP maximum AP
+     * @param notify true if notification is to be created
+     */
+    private void updateState(Calendar time, int currentAP, int desiredAP,
+                             int maxAP, boolean notify)
     {
         // calculate how much time to each AP level
         int minToDesiredAP = 5 * Math.max(desiredAP - currentAP, 0);
@@ -141,23 +156,28 @@ public class MainActivity extends AppCompatActivity {
         // append max AP text
         outputText.append(getString(R.string.timeToDesired));
         outputText.append(generateDurationString(minToMaxAP) + "\n");
-        outputText.append(getString(R.string.timeAtMax) + df.format(time.getTime()) + "\n");
+        outputText.append(getString(R.string.timeAtMax) +
+                df.format(time.getTime()) + "\n");
 
         // set text view text
         _outputTextView.setText(outputText.toString());
 
         // schedule notifications
         if (notify) {
-            Bitmap saber_stand = BitmapFactory.decodeResource(getResources(), R.drawable.saber_stand);
-            Bitmap saber_sad = BitmapFactory.decodeResource(getResources(), R.drawable.saber_sad);
-            NotificationCompat.Builder builder1 = new NotificationCompat.Builder(this, "0")
+            Bitmap saber_stand = BitmapFactory.decodeResource(getResources(),
+                    R.drawable.saber_stand);
+            Bitmap saber_sad = BitmapFactory.decodeResource(getResources(),
+                    R.drawable.saber_sad);
+            NotificationCompat.Builder builder1 =
+                    new NotificationCompat.Builder(this, "0")
                     .setSmallIcon(R.drawable.saber_notif)
                     .setLargeIcon(saber_stand)
                     .setContentTitle(getString(R.string.desiredNotifTitle))
                     .setContentText(getString(R.string.desiredNotifText))
                     .setWhen(desiredAPTimeInMillis);
             scheduleNotification(1, builder1.build(), minToDesiredAP);
-            NotificationCompat.Builder builder2 = new NotificationCompat.Builder(this, "0")
+            NotificationCompat.Builder builder2 =
+                    new NotificationCompat.Builder(this, "0")
                     .setSmallIcon(R.drawable.saber_notif)
                     .setLargeIcon(saber_sad)
                     .setContentTitle(getString(R.string.maxNotifTitle))
@@ -181,8 +201,10 @@ public class MainActivity extends AppCompatActivity {
         int currentAP, desiredAP, maxAP;
         try
         {
-            currentAP = Integer.parseInt(_currentAPEditText.getText().toString());
-            desiredAP = Integer.parseInt(_desiredAPEditText.getText().toString());
+            currentAP =
+                    Integer.parseInt(_currentAPEditText.getText().toString());
+            desiredAP =
+                    Integer.parseInt(_desiredAPEditText.getText().toString());
             maxAP = Integer.parseInt(_maxAPEditText.getText().toString());
         } catch (Exception e)
         {
@@ -194,19 +216,27 @@ public class MainActivity extends AppCompatActivity {
         updateState(Calendar.getInstance(), currentAP, desiredAP, maxAP, true);
     }
 
-    // schedules provided notification in specified number of minutes
+    /**
+     * Schedules provided notification in specified number of minutes.
+     * @param id notification ID
+     * @param n notification to schedule
+     * @param delay delay in minutes
+     */
     private void scheduleNotification(int id, Notification n, int delay) {
-        Intent notificationIntent = new Intent(this, NotificationPublisher.class);
+        Intent notificationIntent =
+                new Intent(this, NotificationPublisher.class);
         notificationIntent.putExtra(NotificationPublisher.NOTIFICATION_ID, id);
         notificationIntent.putExtra(NotificationPublisher.NOTIFICATION, n);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(this, id,
                 notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        AlarmManager alarmManager =
+                (AlarmManager) getSystemService(Context.ALARM_SERVICE);
         Calendar time = Calendar.getInstance();
         time.setTimeInMillis(System.currentTimeMillis());
         time.add(Calendar.MINUTE, delay);
-        alarmManager.setExact(AlarmManager.RTC_WAKEUP, time.getTimeInMillis(), pendingIntent);
+        alarmManager.setExact(AlarmManager.RTC_WAKEUP, time.getTimeInMillis(),
+                pendingIntent);
     }
 
 }
