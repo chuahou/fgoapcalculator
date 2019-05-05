@@ -1,21 +1,14 @@
 package dev.chuahou.fgo_ap_reminder;
 
-import android.app.AlarmManager;
-import android.app.Notification;
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
-import android.content.Context;
-import android.content.Intent;
-import android.content.SharedPreferences;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
+import android.app.*;
+import android.content.*;
+import android.content.res.ColorStateList;
+import android.graphics.*;
 import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.EditText;
-import android.widget.TextView;
+import android.widget.*;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -28,6 +21,8 @@ public class MainActivity extends AppCompatActivity {
     private EditText _currentAPEditText;
     private EditText _desiredAPEditText;
     private EditText _maxAPEditText;
+    private TextView _projectedAPTextView;
+    private ProgressBar _progressBar;
 
     // shared preferences for saving and keys
     private SharedPreferences _sharedPreferences;
@@ -61,6 +56,9 @@ public class MainActivity extends AppCompatActivity {
         _currentAPEditText = (EditText) findViewById(R.id.currentAPEditText);
         _desiredAPEditText = (EditText) findViewById(R.id.desiredAPEditText);
         _maxAPEditText = (EditText) findViewById(R.id.maxAPEditText);
+        _projectedAPTextView = (TextView)
+                findViewById(R.id.projectedAPTextView);
+        _progressBar = (ProgressBar) findViewById(R.id.progressBar);
 
         // get shared preferences
         _sharedPreferences = getPreferences(Context.MODE_PRIVATE);
@@ -162,6 +160,33 @@ public class MainActivity extends AppCompatActivity {
 
         // set text view text
         _outputTextView.setText(outputText.toString());
+
+        // calculate projected AP
+        int minSinceCalculation = (int)
+                ((Calendar.getInstance().getTimeInMillis() - currTimeInMillis) /
+                        (1000 * 60));
+        int projectedAP = currentAP + (minSinceCalculation / 5);
+
+        // set projected AP text view
+        outputText = new StringBuilder();
+        outputText.append(getString(R.string.projectedAP));
+        outputText.append(projectedAP + "/" + maxAP);
+        _projectedAPTextView.setText(outputText.toString());
+
+        // set progress bar
+        if (maxAP <= 0) maxAP = 1;
+        _progressBar.setProgress(projectedAP * 100 / maxAP);
+        int progressBarColor;
+        if (projectedAP < desiredAP)
+            progressBarColor = getColor(R.color.progressBarLow);
+        else if (projectedAP < 0.9 * maxAP)
+            progressBarColor = getColor(R.color.progressBarDesired);
+        else if (projectedAP < maxAP)
+            progressBarColor = getColor(R.color.progressBarNearFull);
+        else
+            progressBarColor = getColor(R.color.progressBarFull);
+        _progressBar.setProgressTintList(
+                ColorStateList.valueOf(progressBarColor));
 
         // schedule notifications
         if (notify) {

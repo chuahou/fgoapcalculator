@@ -16,6 +16,7 @@
     <string name="timeAtDesired">欲しいAP数時刻：</string>
     <string name="timeToMax">AP MAXになるまで：</string>
     <string name="timeAtMax">AP MAXになる時刻：</string>
+    <string name="projectedAP">予想AP数：</string>
 
     <!--- Notifications -->
     <string name="desiredNotifTitle">行きましょう、マスター。</string>
