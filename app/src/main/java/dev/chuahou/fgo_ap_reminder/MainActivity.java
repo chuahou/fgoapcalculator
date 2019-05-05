@@ -65,10 +65,11 @@ public class MainActivity extends AppCompatActivity {
         // get shared preferences
         _sharedPreferences = getPreferences(Context.MODE_PRIVATE);
         Calendar c = new GregorianCalendar();
-        c.setTimeInMillis(_sharedPreferences.getLong(_SP_TIME_KEY, 0));
+        c.setTimeInMillis(_sharedPreferences.getLong(_SP_TIME_KEY,
+                Calendar.getInstance().getTimeInMillis()));
         int currentAP = _sharedPreferences.getInt(_SP_CURRENT_AP_KEY, 0);
-        int desiredAP = _sharedPreferences.getInt(_SP_DESIRED_AP_KEY, 0);
-        int maxAP = _sharedPreferences.getInt(_SP_MAX_AP_KEY, 0);
+        int desiredAP = _sharedPreferences.getInt(_SP_DESIRED_AP_KEY, 40);
+        int maxAP = _sharedPreferences.getInt(_SP_MAX_AP_KEY, 120);
 
         // set output text and fill fields
         updateState(c, currentAP, desiredAP, maxAP, false);
