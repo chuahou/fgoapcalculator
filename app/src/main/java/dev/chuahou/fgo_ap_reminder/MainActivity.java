@@ -1,5 +1,6 @@
 package dev.chuahou.fgo_ap_reminder;
 
+import android.annotation.SuppressLint;
 import android.app.*;
 import android.content.*;
 import android.content.res.ColorStateList;
@@ -62,7 +63,8 @@ public class MainActivity extends AppCompatActivity
 
         // set content and title
         setContentView(R.layout.activity_main);
-        getSupportActionBar().setTitle(R.string.actionBarTitle);
+        if (getSupportActionBar() != null)
+            getSupportActionBar().setTitle(R.string.actionBarTitle);
 
         // create notification channel
         CharSequence name = getString(R.string.notificationChannel);
@@ -76,13 +78,12 @@ public class MainActivity extends AppCompatActivity
         notificationManager.createNotificationChannel(channel);
 
         // get needed views
-        _outputTextView = (TextView) findViewById(R.id.outputTextView);
-        _currentApEditText = (EditText) findViewById(R.id.currentAPEditText);
-        _desiredApEditText = (EditText) findViewById(R.id.desiredAPEditText);
-        _maxApEditText = (EditText) findViewById(R.id.maxAPEditText);
-        _projectedAPTextView = (TextView)
-                findViewById(R.id.projectedAPTextView);
-        _progressBar = (ProgressBar) findViewById(R.id.progressBar);
+        _outputTextView = findViewById(R.id.outputTextView);
+        _currentApEditText = findViewById(R.id.currentAPEditText);
+        _desiredApEditText = findViewById(R.id.desiredAPEditText);
+        _maxApEditText = findViewById(R.id.maxAPEditText);
+        _projectedAPTextView = findViewById(R.id.projectedAPTextView);
+        _progressBar = findViewById(R.id.progressBar);
     }
 
     /**
@@ -91,9 +92,10 @@ public class MainActivity extends AppCompatActivity
      * @param minutes the duration in minutes
      * @return string format duration
      */
+    @SuppressLint("DefaultLocale")
     private String GenerateDurationString(int minutes)
     {
-        StringBuilder sb = new StringBuilder("");
+        StringBuilder sb = new StringBuilder();
 
         // 0 minutes
         if (minutes == 0)
@@ -106,18 +108,18 @@ public class MainActivity extends AppCompatActivity
         {
             // add hours display
             int hours = minutes / 60;
-            sb.append(hours + "時間");
+            sb.append(hours).append("時間");
             minutes -= hours * 60;
 
             // add minutes display if necessary
             if (minutes > 0)
-                sb.append(String.format("%02d", minutes) + "分");
+                sb.append(String.format("%02d", minutes)).append("分");
         }
 
         // less than 1 hour
         else
         {
-            sb.append(minutes + "分");
+            sb.append(minutes).append("分");
         }
 
         return sb.toString();
@@ -141,33 +143,40 @@ public class MainActivity extends AppCompatActivity
         int minTomaxAp = 5 * Math.max(maxAp - currentAp, 0);
 
         // variable to append to
-        StringBuilder outputText = new StringBuilder("");
+        StringBuilder outputText = new StringBuilder();
 
         // date formatting
+        @SuppressLint("SimpleDateFormat")
         SimpleDateFormat df = new SimpleDateFormat("h:mm a");
 
         // get current time
         long currTimeInMillis = time.getTimeInMillis(); // for saving
-        outputText.append(getString(R.string.currentTime) + df.format(time.getTime()) + "\n");
+        outputText.append(getString(R.string.currentTime))
+                .append(df.format(time.getTime())).append("\n");
 
         // get time to desired AP
         time.add(Calendar.MINUTE, minTodesiredAp);
         long desiredApTimeInMillis = time.getTimeInMillis();
 
         // append desired AP text
-        outputText.append(getString(R.string.timeToDesired));
-        outputText.append(GenerateDurationString(minTodesiredAp) + "\n");
-        outputText.append(getString(R.string.timeAtDesired) + df.format(time.getTime()) + "\n");
+        outputText.append(getString(R.string.timeToDesired))
+                .append(GenerateDurationString(minTodesiredAp))
+                .append("\n")
+                .append(getString(R.string.timeAtDesired))
+                .append(df.format(time.getTime()))
+                .append("\n");
 
         // get time to max AP
         time.add(Calendar.MINUTE, minTomaxAp - minTodesiredAp);
         long maxApTimeInMillis = time.getTimeInMillis();
 
         // append max AP text
-        outputText.append(getString(R.string.timeToDesired));
-        outputText.append(GenerateDurationString(minTomaxAp) + "\n");
-        outputText.append(getString(R.string.timeAtMax) +
-                df.format(time.getTime()) + "\n");
+        outputText.append(getString(R.string.timeToDesired))
+                .append(GenerateDurationString(minTomaxAp))
+                .append("\n")
+                .append(getString(R.string.timeAtMax))
+                .append(df.format(time.getTime()))
+                .append("\n");
 
         // set text view text
         _outputTextView.setText(outputText.toString());
@@ -176,23 +185,25 @@ public class MainActivity extends AppCompatActivity
         int minSinceCalculation = (int)
                 ((Calendar.getInstance().getTimeInMillis() - currTimeInMillis) /
                         (1000 * 60));
-        int projectedAP = currentAp + (minSinceCalculation / 5);
+        int projectedAp = currentAp + (minSinceCalculation / 5);
 
         // set projected AP text view
         outputText = new StringBuilder();
-        outputText.append(getString(R.string.projectedAP));
-        outputText.append(projectedAP + "/" + maxAp);
+        outputText.append(getString(R.string.projectedAP))
+                .append(projectedAp)
+                .append("/")
+                .append(maxAp);
         _projectedAPTextView.setText(outputText.toString());
 
         // set progress bar
         if (maxAp <= 0) maxAp = 1;
-        _progressBar.setProgress(projectedAP * 100 / maxAp);
+        _progressBar.setProgress(projectedAp * 100 / maxAp);
         int progressBarColor;
-        if (projectedAP < desiredAp)
+        if (projectedAp < desiredAp)
             progressBarColor = getColor(R.color.progressBarLow);
-        else if (projectedAP < 0.9 * maxAp)
+        else if (projectedAp < 0.9 * maxAp)
             progressBarColor = getColor(R.color.progressBarDesired);
-        else if (projectedAP < maxAp)
+        else if (projectedAp < maxAp)
             progressBarColor = getColor(R.color.progressBarNearFull);
         else
             progressBarColor = getColor(R.color.progressBarFull);
@@ -232,7 +243,7 @@ public class MainActivity extends AppCompatActivity
         editor.putInt(_SP_CURRENT_AP_KEY, currentAp);
         editor.putInt(_SP_DESIRED_AP_KEY, desiredAp);
         editor.putInt(_SP_MAX_AP_KEY, maxAp);
-        editor.commit();
+        editor.apply();
     }
 
     // handle confirm button clicked
