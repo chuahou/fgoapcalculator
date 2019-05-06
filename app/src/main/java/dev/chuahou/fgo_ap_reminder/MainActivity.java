@@ -14,7 +14,8 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity
+{
 
     // required views from this activity
     private TextView _outputTextView;
@@ -31,9 +32,32 @@ public class MainActivity extends AppCompatActivity {
     private final String _SP_DESIRED_AP_KEY = "desired";
     private final String _SP_MAX_AP_KEY = "max";
 
+    // reloads shared preferences and refreshes UI
+    @Override
+    protected void onResume()
+    {
+        super.onResume();
+
+        // get shared preferences
+        _sharedPreferences = getPreferences(Context.MODE_PRIVATE);
+        Calendar c = new GregorianCalendar();
+        c.setTimeInMillis(_sharedPreferences.getLong(_SP_TIME_KEY,
+                Calendar.getInstance().getTimeInMillis()));
+        int currentAP = _sharedPreferences.getInt(_SP_CURRENT_AP_KEY, 0);
+        int desiredAP = _sharedPreferences.getInt(_SP_DESIRED_AP_KEY, 40);
+        int maxAP = _sharedPreferences.getInt(_SP_MAX_AP_KEY, 120);
+
+        // set output text and fill fields
+        updateState(c, currentAP, desiredAP, maxAP, false);
+        _currentAPEditText.setText(String.valueOf(currentAP));
+        _desiredAPEditText.setText(String.valueOf(desiredAP));
+        _maxAPEditText.setText(String.valueOf(maxAP));
+    }
+
     // initialize the activity
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
 
         // set content and title
@@ -59,25 +83,11 @@ public class MainActivity extends AppCompatActivity {
         _projectedAPTextView = (TextView)
                 findViewById(R.id.projectedAPTextView);
         _progressBar = (ProgressBar) findViewById(R.id.progressBar);
-
-        // get shared preferences
-        _sharedPreferences = getPreferences(Context.MODE_PRIVATE);
-        Calendar c = new GregorianCalendar();
-        c.setTimeInMillis(_sharedPreferences.getLong(_SP_TIME_KEY,
-                Calendar.getInstance().getTimeInMillis()));
-        int currentAP = _sharedPreferences.getInt(_SP_CURRENT_AP_KEY, 0);
-        int desiredAP = _sharedPreferences.getInt(_SP_DESIRED_AP_KEY, 40);
-        int maxAP = _sharedPreferences.getInt(_SP_MAX_AP_KEY, 120);
-
-        // set output text and fill fields
-        updateState(c, currentAP, desiredAP, maxAP, false);
-        _currentAPEditText.setText(String.valueOf(currentAP));
-        _desiredAPEditText.setText(String.valueOf(desiredAP));
-        _maxAPEditText.setText(String.valueOf(maxAP));
     }
 
     /**
      * Generates a string representing the duration provided.
+     *
      * @param minutes the duration in minutes
      * @return string format duration
      */
@@ -116,11 +126,12 @@ public class MainActivity extends AppCompatActivity {
     /**
      * Process AP levels, updating the saved state, notification and output
      * text in the UI.
-     * @param time time at which calculation was performed
+     *
+     * @param time      time at which calculation was performed
      * @param currentAP current AP at time of calculation
      * @param desiredAP desired AP
-     * @param maxAP maximum AP
-     * @param notify true if notification is to be created
+     * @param maxAP     maximum AP
+     * @param notify    true if notification is to be created
      */
     private void updateState(Calendar time, int currentAP, int desiredAP,
                              int maxAP, boolean notify)
@@ -189,26 +200,27 @@ public class MainActivity extends AppCompatActivity {
                 ColorStateList.valueOf(progressBarColor));
 
         // schedule notifications
-        if (notify) {
+        if (notify)
+        {
             Bitmap saber_stand = BitmapFactory.decodeResource(getResources(),
                     R.drawable.saber_stand);
             Bitmap saber_sad = BitmapFactory.decodeResource(getResources(),
                     R.drawable.saber_sad);
             NotificationCompat.Builder builder1 =
                     new NotificationCompat.Builder(this, "0")
-                    .setSmallIcon(R.drawable.saber_notif)
-                    .setLargeIcon(saber_stand)
-                    .setContentTitle(getString(R.string.desiredNotifTitle))
-                    .setContentText(getString(R.string.desiredNotifText))
-                    .setWhen(desiredAPTimeInMillis);
+                            .setSmallIcon(R.drawable.saber_notif)
+                            .setLargeIcon(saber_stand)
+                            .setContentTitle(getString(R.string.desiredNotifTitle))
+                            .setContentText(getString(R.string.desiredNotifText))
+                            .setWhen(desiredAPTimeInMillis);
             scheduleNotification(1, builder1.build(), minToDesiredAP);
             NotificationCompat.Builder builder2 =
                     new NotificationCompat.Builder(this, "0")
-                    .setSmallIcon(R.drawable.saber_notif)
-                    .setLargeIcon(saber_sad)
-                    .setContentTitle(getString(R.string.maxNotifTitle))
-                    .setContentText(getString(R.string.maxNotifText))
-                    .setWhen(maxAPTimeInMillis);
+                            .setSmallIcon(R.drawable.saber_notif)
+                            .setLargeIcon(saber_sad)
+                            .setContentTitle(getString(R.string.maxNotifTitle))
+                            .setContentText(getString(R.string.maxNotifText))
+                            .setWhen(maxAPTimeInMillis);
             scheduleNotification(2, builder2.build(), minToMaxAP);
         }
 
@@ -222,7 +234,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     // handle confirm button clicked
-    public void buttonClicked(View view) {
+    public void buttonClicked(View view)
+    {
         // get AP values
         int currentAP, desiredAP, maxAP;
         try
@@ -232,7 +245,8 @@ public class MainActivity extends AppCompatActivity {
             desiredAP =
                     Integer.parseInt(_desiredAPEditText.getText().toString());
             maxAP = Integer.parseInt(_maxAPEditText.getText().toString());
-        } catch (Exception e)
+        }
+        catch (Exception e)
         {
             _outputTextView.setText(R.string.invalidInputMessage);
             return;
@@ -244,11 +258,13 @@ public class MainActivity extends AppCompatActivity {
 
     /**
      * Schedules provided notification in specified number of minutes.
-     * @param id notification ID
-     * @param n notification to schedule
+     *
+     * @param id    notification ID
+     * @param n     notification to schedule
      * @param delay delay in minutes
      */
-    private void scheduleNotification(int id, Notification n, int delay) {
+    private void scheduleNotification(int id, Notification n, int delay)
+    {
         Intent notificationIntent =
                 new Intent(this, NotificationPublisher.class);
         notificationIntent.putExtra(NotificationPublisher.NOTIFICATION_ID, id);
