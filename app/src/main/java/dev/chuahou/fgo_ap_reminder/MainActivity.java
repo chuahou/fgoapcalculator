@@ -213,7 +213,8 @@ public class MainActivity extends AppCompatActivity
                             .setContentTitle(getString(R.string.desiredNotifTitle))
                             .setContentText(getString(R.string.desiredNotifText))
                             .setWhen(desiredApTimeInMillis);
-            ScheduleNotification(1, builder1.build(), minTodesiredAp);
+            NotificationPublisher.ScheduleNotificationInMinutes(this, 1,
+                    builder1.build(), minTodesiredAp);
             NotificationCompat.Builder builder2 =
                     new NotificationCompat.Builder(this, "0")
                             .setSmallIcon(R.drawable.saber_notif)
@@ -221,7 +222,8 @@ public class MainActivity extends AppCompatActivity
                             .setContentTitle(getString(R.string.maxNotifTitle))
                             .setContentText(getString(R.string.maxNotifText))
                             .setWhen(maxApTimeInMillis);
-            ScheduleNotification(2, builder2.build(), minTomaxAp);
+            NotificationPublisher.ScheduleNotificationInMinutes(this, 2,
+                    builder2.build(), minTomaxAp);
         }
 
         // save shared preferences
@@ -254,31 +256,6 @@ public class MainActivity extends AppCompatActivity
 
         // update state and notify
         UpdateState(Calendar.getInstance(), currentAp, desiredAp, maxAp, true);
-    }
-
-    /**
-     * Schedules provided notification in specified number of minutes.
-     *
-     * @param id notification ID
-     * @param n notification to schedule
-     * @param delay delay in minutes
-     */
-    private void ScheduleNotification(int id, Notification n, int delay)
-    {
-        Intent notificationIntent =
-                new Intent(this, NotificationPublisher.class);
-        notificationIntent.putExtra(NotificationPublisher.NotificationId, id);
-        notificationIntent.putExtra(NotificationPublisher.NotificationExtra, n);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, id,
-                notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-
-        AlarmManager alarmManager =
-                (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-        Calendar time = Calendar.getInstance();
-        time.setTimeInMillis(System.currentTimeMillis());
-        time.add(Calendar.MINUTE, delay);
-        alarmManager.setExact(AlarmManager.RTC_WAKEUP, time.getTimeInMillis(),
-                pendingIntent);
     }
 
 }
