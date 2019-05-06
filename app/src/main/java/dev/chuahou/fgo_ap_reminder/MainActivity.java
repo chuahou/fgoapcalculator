@@ -33,28 +33,6 @@ public class MainActivity extends AppCompatActivity
     private final String _SP_DESIRED_AP_KEY = "desired";
     private final String _SP_MAX_AP_KEY = "max";
 
-    // reloads shared preferences and refreshes UI
-    @Override
-    protected void onResume()
-    {
-        super.onResume();
-
-        // get shared preferences
-        _sharedPreferences = getPreferences(Context.MODE_PRIVATE);
-        Calendar c = new GregorianCalendar();
-        c.setTimeInMillis(_sharedPreferences.getLong(_SP_TIME_KEY,
-                Calendar.getInstance().getTimeInMillis()));
-        int currentAp = _sharedPreferences.getInt(_SP_CURRENT_AP_KEY, 0);
-        int desiredAp = _sharedPreferences.getInt(_SP_DESIRED_AP_KEY, 40);
-        int maxAp = _sharedPreferences.getInt(_SP_MAX_AP_KEY, 120);
-
-        // set output text and fill fields
-        UpdateState(c, currentAp, desiredAp, maxAp, false);
-        _currentApEditText.setText(String.valueOf(currentAp));
-        _desiredApEditText.setText(String.valueOf(desiredAp));
-        _maxApEditText.setText(String.valueOf(maxAp));
-    }
-
     // initialize the activity
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -84,6 +62,59 @@ public class MainActivity extends AppCompatActivity
         _maxApEditText = findViewById(R.id.maxApEditText);
         _projectedAPTextView = findViewById(R.id.projectedApTextView);
         _progressBar = findViewById(R.id.progressBar);
+    }
+
+    // reloads shared preferences and refreshes UI
+    @Override
+    protected void onResume()
+    {
+        super.onResume();
+
+        // get shared preferences
+        _sharedPreferences = getPreferences(Context.MODE_PRIVATE);
+        Calendar c = new GregorianCalendar();
+        c.setTimeInMillis(_sharedPreferences.getLong(_SP_TIME_KEY,
+                Calendar.getInstance().getTimeInMillis()));
+        int currentAp = _sharedPreferences.getInt(_SP_CURRENT_AP_KEY, 0);
+        int desiredAp = _sharedPreferences.getInt(_SP_DESIRED_AP_KEY, 40);
+        int maxAp = _sharedPreferences.getInt(_SP_MAX_AP_KEY, 120);
+
+        // set output text and fill fields
+        UpdateUi((Calendar) c.clone(), currentAp, desiredAp, maxAp);
+        UpdateProgressBar((Calendar) c.clone(), currentAp, desiredAp, maxAp);
+        SaveSharedPreferences((Calendar) c.clone(), currentAp, desiredAp,
+                maxAp);
+        _currentApEditText.setText(String.valueOf(currentAp));
+        _desiredApEditText.setText(String.valueOf(desiredAp));
+        _maxApEditText.setText(String.valueOf(maxAp));
+    }
+
+    // handle confirm button clicked
+    public void buttonClicked(View view)
+    {
+        // get AP values
+        int currentAp, desiredAp, maxAp;
+        try
+        {
+            currentAp =
+                    Integer.parseInt(_currentApEditText.getText().toString());
+            desiredAp =
+                    Integer.parseInt(_desiredApEditText.getText().toString());
+            maxAp = Integer.parseInt(_maxApEditText.getText().toString());
+        }
+        catch (Exception e)
+        {
+            _outputTextView.setText(R.string.invalidInputMessage);
+            return;
+        }
+
+        // update state and notify
+        UpdateUi(Calendar.getInstance(), currentAp, desiredAp, maxAp);
+        UpdateProgressBar(Calendar.getInstance(), currentAp, desiredAp, maxAp);
+        SaveSharedPreferences(Calendar.getInstance(), currentAp, desiredAp,
+                maxAp);
+        ScheduleNotifications(Calendar.getInstance(), currentAp, desiredAp,
+                maxAp);
     }
 
     /**
@@ -126,21 +157,31 @@ public class MainActivity extends AppCompatActivity
     }
 
     /**
-     * Process AP levels, updating the saved state, notification and output
-     * text in the UI.
+     * Calculates time taken in between two AP levels.
+     *
+     * @param fromAp starting AP level
+     * @param toAp AP level to calculate time till
+     * @return time till second AP level
+     */
+    private int TimeBetweenApLevels(int fromAp, int toAp)
+    {
+        return 5 * Math.max(toAp - fromAp, 0);
+    }
+
+    /**
+     * Process AP levels, updating UI.
      *
      * @param time time at which calculation was performed
      * @param currentAp current AP at time of calculation
      * @param desiredAp desired AP
      * @param maxAp maximum AP
-     * @param notify true if notification is to be created
      */
-    private void UpdateState(Calendar time, int currentAp, int desiredAp,
-                             int maxAp, boolean notify)
+    private void UpdateUi(Calendar time, int currentAp, int desiredAp,
+                          int maxAp)
     {
         // calculate how much time to each AP level
-        int minTodesiredAp = 5 * Math.max(desiredAp - currentAp, 0);
-        int minTomaxAp = 5 * Math.max(maxAp - currentAp, 0);
+        int minToDesiredAp = TimeBetweenApLevels(currentAp, desiredAp);
+        int minToMaxAp = TimeBetweenApLevels(currentAp, maxAp);
 
         // variable to append to
         StringBuilder outputText = new StringBuilder();
@@ -150,29 +191,26 @@ public class MainActivity extends AppCompatActivity
         SimpleDateFormat df = new SimpleDateFormat("h:mm a");
 
         // get current time
-        long currTimeInMillis = time.getTimeInMillis(); // for saving
         outputText.append(getString(R.string.currentTime))
                 .append(df.format(time.getTime())).append("\n");
 
         // get time to desired AP
-        time.add(Calendar.MINUTE, minTodesiredAp);
-        long desiredApTimeInMillis = time.getTimeInMillis();
+        time.add(Calendar.MINUTE, minToDesiredAp);
 
         // append desired AP text
         outputText.append(getString(R.string.timeToDesired))
-                .append(GenerateDurationString(minTodesiredAp))
+                .append(GenerateDurationString(minToDesiredAp))
                 .append("\n")
                 .append(getString(R.string.timeAtDesired))
                 .append(df.format(time.getTime()))
                 .append("\n");
 
         // get time to max AP
-        time.add(Calendar.MINUTE, minTomaxAp - minTodesiredAp);
-        long maxApTimeInMillis = time.getTimeInMillis();
+        time.add(Calendar.MINUTE, minToMaxAp - minToDesiredAp);
 
         // append max AP text
         outputText.append(getString(R.string.timeToDesired))
-                .append(GenerateDurationString(minTomaxAp))
+                .append(GenerateDurationString(minToMaxAp))
                 .append("\n")
                 .append(getString(R.string.timeAtMax))
                 .append(df.format(time.getTime()))
@@ -180,20 +218,29 @@ public class MainActivity extends AppCompatActivity
 
         // set text view text
         _outputTextView.setText(outputText.toString());
+    }
 
+    /**
+     * Process AP levels, updating progress bar.
+     *
+     * @param time time at which calculation was performed
+     * @param currentAp current AP at time of calculation
+     * @param desiredAp desired AP
+     * @param maxAp maximum AP
+     */
+    private void UpdateProgressBar(Calendar time, int currentAp, int desiredAp,
+                                   int maxAp)
+    {
         // calculate projected AP
         int minSinceCalculation = (int)
-                ((Calendar.getInstance().getTimeInMillis() - currTimeInMillis) /
-                        (1000 * 60));
+                ((Calendar.getInstance().getTimeInMillis() -
+                        time.getTimeInMillis()) / (1000 * 60));
         int projectedAp = currentAp + (minSinceCalculation / 5);
 
         // set projected AP text view
-        outputText = new StringBuilder();
-        outputText.append(getString(R.string.projectedAP))
-                .append(projectedAp)
-                .append("/")
-                .append(maxAp);
-        _projectedAPTextView.setText(outputText.toString());
+        String outputText = getString(R.string.projectedAp) +
+                projectedAp + "/" + maxAp;
+        _projectedAPTextView.setText(outputText);
 
         // set progress bar
         if (maxAp <= 0) maxAp = 1;
@@ -209,64 +256,69 @@ public class MainActivity extends AppCompatActivity
             progressBarColor = getColor(R.color.progressBarFull);
         _progressBar.setProgressTintList(
                 ColorStateList.valueOf(progressBarColor));
+    }
+
+    /**
+     * Schedule notifications based on AP levels.
+     *
+     * @param time time at which calculation was performed
+     * @param currentAp current AP at time of calculation
+     * @param desiredAp desired AP
+     * @param maxAp maximum AP
+     */
+    private void ScheduleNotifications(Calendar time, int currentAp,
+                                       int desiredAp, int maxAp)
+    {
+        // get time of desired AP and max AP
+        int minToDesiredAp = TimeBetweenApLevels(currentAp, desiredAp);
+        time.add(Calendar.MINUTE, minToDesiredAp);
+        long desiredApTimeInMillis = time.getTimeInMillis();
+        int minToMaxAp = TimeBetweenApLevels(currentAp, maxAp);
+        time.add(Calendar.MINUTE, minToMaxAp - minToDesiredAp);
+        long maxApTimeInMillis = time.getTimeInMillis();
 
         // schedule notifications
-        if (notify)
-        {
-            Bitmap saber_stand = BitmapFactory.decodeResource(getResources(),
-                    R.drawable.saber_stand);
-            Bitmap saber_sad = BitmapFactory.decodeResource(getResources(),
-                    R.drawable.saber_sad);
-            NotificationCompat.Builder builder1 =
-                    new NotificationCompat.Builder(this, "0")
-                            .setSmallIcon(R.drawable.saber_notif)
-                            .setLargeIcon(saber_stand)
-                            .setContentTitle(getString(R.string.desiredNotifTitle))
-                            .setContentText(getString(R.string.desiredNotifText))
-                            .setWhen(desiredApTimeInMillis);
-            NotificationPublisher.ScheduleNotificationInMinutes(this, 1,
-                    builder1.build(), minTodesiredAp);
-            NotificationCompat.Builder builder2 =
-                    new NotificationCompat.Builder(this, "0")
-                            .setSmallIcon(R.drawable.saber_notif)
-                            .setLargeIcon(saber_sad)
-                            .setContentTitle(getString(R.string.maxNotifTitle))
-                            .setContentText(getString(R.string.maxNotifText))
-                            .setWhen(maxApTimeInMillis);
-            NotificationPublisher.ScheduleNotificationInMinutes(this, 2,
-                    builder2.build(), minTomaxAp);
-        }
+        Bitmap saber_stand = BitmapFactory.decodeResource(getResources(),
+                R.drawable.saber_stand);
+        Bitmap saber_sad = BitmapFactory.decodeResource(getResources(),
+                R.drawable.saber_sad);
+        NotificationCompat.Builder builder1 =
+                new NotificationCompat.Builder(this, "0")
+                        .setSmallIcon(R.drawable.saber_notif)
+                        .setLargeIcon(saber_stand)
+                        .setContentTitle(getString(R.string.desiredNotifTitle))
+                        .setContentText(getString(R.string.desiredNotifText))
+                        .setWhen(desiredApTimeInMillis);
+        NotificationPublisher.ScheduleNotificationInMinutes(this, 1,
+                builder1.build(), minToDesiredAp);
+        NotificationCompat.Builder builder2 =
+                new NotificationCompat.Builder(this, "0")
+                        .setSmallIcon(R.drawable.saber_notif)
+                        .setLargeIcon(saber_sad)
+                        .setContentTitle(getString(R.string.maxNotifTitle))
+                        .setContentText(getString(R.string.maxNotifText))
+                        .setWhen(maxApTimeInMillis);
+        NotificationPublisher.ScheduleNotificationInMinutes(this, 2,
+                builder2.build(), minToMaxAp);
+    }
 
-        // save shared preferences
+    /**
+     * Save current state for later loading.
+     *
+     * @param time time at which calculation was performed
+     * @param currentAp current AP at time of calculation
+     * @param desiredAp desired AP
+     * @param maxAp maximum AP
+     */
+    private void SaveSharedPreferences(Calendar time, int currentAp,
+                                       int desiredAp, int maxAp)
+    {
         SharedPreferences.Editor editor = _sharedPreferences.edit();
-        editor.putLong(_SP_TIME_KEY, currTimeInMillis);
+        editor.putLong(_SP_TIME_KEY, time.getTimeInMillis());
         editor.putInt(_SP_CURRENT_AP_KEY, currentAp);
         editor.putInt(_SP_DESIRED_AP_KEY, desiredAp);
         editor.putInt(_SP_MAX_AP_KEY, maxAp);
         editor.apply();
-    }
-
-    // handle confirm button clicked
-    public void buttonClicked(View view)
-    {
-        // get AP values
-        int currentAp, desiredAp, maxAp;
-        try
-        {
-            currentAp =
-                    Integer.parseInt(_currentApEditText.getText().toString());
-            desiredAp =
-                    Integer.parseInt(_desiredApEditText.getText().toString());
-            maxAp = Integer.parseInt(_maxApEditText.getText().toString());
-        }
-        catch (Exception e)
-        {
-            _outputTextView.setText(R.string.invalidInputMessage);
-            return;
-        }
-
-        // update state and notify
-        UpdateState(Calendar.getInstance(), currentAp, desiredAp, maxAp, true);
     }
 
 }
