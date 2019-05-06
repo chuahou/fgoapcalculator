@@ -3,9 +3,9 @@
 
     <!--- UI -->
     <string name="actionBarTitle">Fate/AP calculator</string>
-    <string name="currentAPTextView">現在のAP</string>
-    <string name="desiredAPTextView">欲しいAP</string>
-    <string name="maxAPTextView">最大AP数</string>
+    <string name="currentApTextView">現在のAP</string>
+    <string name="desiredApTextView">欲しいAP</string>
+    <string name="maxApTextView">最大AP数</string>
     <string name="editTextHint">入力するがいい</string>
     <string name="confirmButton">確認</string>
 
@@ -16,7 +16,7 @@
     <string name="timeAtDesired">欲しいAP数時刻：</string>
     <string name="timeToMax">AP MAXになるまで：</string>
     <string name="timeAtMax">AP MAXになる時刻：</string>
-    <string name="projectedAP">予想AP数：</string>
+    <string name="projectedAp">予想AP数：</string>
 
     <!--- Notifications -->
     <string name="desiredNotifTitle">行きましょう、マスター。</string>

@@ -25,17 +25,17 @@
             android:layout_height="match_parent">
 
             <TextView
-                android:id="@+id/currentAPTextView"
+                android:id="@+id/currentApTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/currentAPTextView"
+                android:paddingLeft="8dp"
+                android:paddingRight="8dp"
+                android:text="@string/currentApTextView"
                 tools:layout_editor_absoluteX="8dp"
-                tools:layout_editor_absoluteY="8dp"
-                android:paddingLeft="8dp"
-                android:paddingRight="8dp"/>
+                tools:layout_editor_absoluteY="8dp" />
 
             <EditText
-                android:id="@+id/currentAPEditText"
+                android:id="@+id/currentApEditText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:ems="10"
@@ -49,15 +49,15 @@
             android:layout_height="match_parent">
 
             <TextView
-                android:id="@+id/desiredAPTextView"
+                android:id="@+id/desiredApTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/desiredAPTextView"
+                android:text="@string/desiredApTextView"
                 android:paddingLeft="8dp"
                 android:paddingRight="8dp"/>
 
             <EditText
-                android:id="@+id/desiredAPEditText"
+                android:id="@+id/desiredApEditText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:ems="10"
@@ -71,15 +71,15 @@
             android:layout_height="match_parent">
 
             <TextView
-                android:id="@+id/maxAPTextView"
+                android:id="@+id/maxApTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/maxAPTextView"
+                android:text="@string/maxApTextView"
                 android:paddingLeft="8dp"
                 android:paddingRight="8dp"/>
 
             <EditText
-                android:id="@+id/maxAPEditText"
+                android:id="@+id/maxApEditText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:ems="10"
@@ -116,7 +116,7 @@
         app:layout_constraintTop_toBottomOf="@+id/button" />
 
     <TextView
-        android:id="@+id/projectedAPTextView"
+        android:id="@+id/projectedApTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
@@ -136,6 +136,6 @@
         android:progressDrawable="@drawable/progressbar"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/projectedAPTextView" />
+        app:layout_constraintTop_toBottomOf="@+id/projectedApTextView" />
 
 </android.support.constraint.ConstraintLayout>

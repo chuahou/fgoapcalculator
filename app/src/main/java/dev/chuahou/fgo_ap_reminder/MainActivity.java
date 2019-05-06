@@ -79,10 +79,10 @@ public class MainActivity extends AppCompatActivity
 
         // get needed views
         _outputTextView = findViewById(R.id.outputTextView);
-        _currentApEditText = findViewById(R.id.currentAPEditText);
-        _desiredApEditText = findViewById(R.id.desiredAPEditText);
-        _maxApEditText = findViewById(R.id.maxAPEditText);
-        _projectedAPTextView = findViewById(R.id.projectedAPTextView);
+        _currentApEditText = findViewById(R.id.currentApEditText);
+        _desiredApEditText = findViewById(R.id.desiredApEditText);
+        _maxApEditText = findViewById(R.id.maxApEditText);
+        _projectedAPTextView = findViewById(R.id.projectedApTextView);
         _progressBar = findViewById(R.id.progressBar);
     }
 
