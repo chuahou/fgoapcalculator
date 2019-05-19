@@ -235,7 +235,8 @@ public class MainActivity extends AppCompatActivity
         int minSinceCalculation = (int)
                 ((Calendar.getInstance().getTimeInMillis() -
                         time.getTimeInMillis()) / (1000 * 60));
-        int projectedAp = currentAp + (minSinceCalculation / 5);
+        int projectedAp = Math.min(currentAp + (minSinceCalculation / 5),
+                maxAp);
 
         // set projected AP text view
         String outputText = getString(R.string.projectedAp) +
