@@ -131,7 +131,7 @@ public class MainActivity extends AppCompatActivity
         // 0 minutes
         if (minutes == 0)
         {
-            sb.append("0分");
+            sb.append("0 min");
         }
 
         // hours and minutes
@@ -139,18 +139,18 @@ public class MainActivity extends AppCompatActivity
         {
             // add hours display
             int hours = minutes / 60;
-            sb.append(hours).append("時間");
+            sb.append(hours).append(" h ");
             minutes -= hours * 60;
 
             // add minutes display if necessary
             if (minutes > 0)
-                sb.append(String.format("%02d", minutes)).append("分");
+                sb.append(String.format("%02d", minutes)).append(" min");
         }
 
         // less than 1 hour
         else
         {
-            sb.append(minutes).append("分");
+            sb.append(minutes).append(" min");
         }
 
         return sb.toString();
