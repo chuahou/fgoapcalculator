@@ -279,14 +279,9 @@ public class MainActivity extends AppCompatActivity
         long maxApTimeInMillis = time.getTimeInMillis();
 
         // schedule notifications
-        Bitmap saber_stand = BitmapFactory.decodeResource(getResources(),
-                R.drawable.saber_stand);
-        Bitmap saber_sad = BitmapFactory.decodeResource(getResources(),
-                R.drawable.saber_sad);
         NotificationCompat.Builder builder1 =
                 new NotificationCompat.Builder(this, "0")
-                        .setSmallIcon(R.drawable.saber_notif)
-                        .setLargeIcon(saber_stand)
+                        .setSmallIcon(R.drawable.logo_notif)
                         .setContentTitle(getString(R.string.desiredNotifTitle))
                         .setContentText(getString(R.string.desiredNotifText))
                         .setWhen(desiredApTimeInMillis);
@@ -294,8 +289,7 @@ public class MainActivity extends AppCompatActivity
                 builder1.build(), minToDesiredAp);
         NotificationCompat.Builder builder2 =
                 new NotificationCompat.Builder(this, "0")
-                        .setSmallIcon(R.drawable.saber_notif)
-                        .setLargeIcon(saber_sad)
+                        .setSmallIcon(R.drawable.logo_notif)
                         .setContentTitle(getString(R.string.maxNotifTitle))
                         .setContentText(getString(R.string.maxNotifText))
                         .setWhen(maxApTimeInMillis);
