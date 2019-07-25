@@ -131,7 +131,7 @@ public class MainActivity extends AppCompatActivity
         // 0 minutes
         if (minutes == 0)
         {
-            sb.append("0 min");
+            sb.append("0分");
         }
 
         // hours and minutes
@@ -139,18 +139,18 @@ public class MainActivity extends AppCompatActivity
         {
             // add hours display
             int hours = minutes / 60;
-            sb.append(hours).append(" h ");
+            sb.append(hours).append("時間");
             minutes -= hours * 60;
 
             // add minutes display if necessary
             if (minutes > 0)
-                sb.append(String.format("%02d", minutes)).append(" min");
+                sb.append(String.format("%02d", minutes)).append("分");
         }
 
         // less than 1 hour
         else
         {
-            sb.append(minutes).append(" min");
+            sb.append(minutes).append("分");
         }
 
         return sb.toString();
@@ -279,9 +279,14 @@ public class MainActivity extends AppCompatActivity
         long maxApTimeInMillis = time.getTimeInMillis();
 
         // schedule notifications
+        Bitmap saber_stand = BitmapFactory.decodeResource(getResources(),
+                R.drawable.saber_stand);
+        Bitmap saber_sad = BitmapFactory.decodeResource(getResources(),
+                R.drawable.saber_sad);
         NotificationCompat.Builder builder1 =
                 new NotificationCompat.Builder(this, "0")
-                        .setSmallIcon(R.drawable.logo_notif)
+                        .setSmallIcon(R.drawable.saber_notif)
+                        .setLargeIcon(saber_stand)
                         .setContentTitle(getString(R.string.desiredNotifTitle))
                         .setContentText(getString(R.string.desiredNotifText))
                         .setWhen(desiredApTimeInMillis);
@@ -289,7 +294,8 @@ public class MainActivity extends AppCompatActivity
                 builder1.build(), minToDesiredAp);
         NotificationCompat.Builder builder2 =
                 new NotificationCompat.Builder(this, "0")
-                        .setSmallIcon(R.drawable.logo_notif)
+                        .setSmallIcon(R.drawable.saber_notif)
+                        .setLargeIcon(saber_sad)
                         .setContentTitle(getString(R.string.maxNotifTitle))
                         .setContentText(getString(R.string.maxNotifText))
                         .setWhen(maxApTimeInMillis);
