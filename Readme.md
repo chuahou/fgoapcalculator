@@ -18,5 +18,4 @@ licensed graphics for publishing.
 
 ## Release on Play Store
 
-This app will be released on the Google Play Store. It is currently undergoing review, and when published, the link will
-be added here.
+The English version without graphics can be found on the Play Store [here](https://play.google.com/store/apps/details?id=dev.chuahou.fgo_ap_reminder).
